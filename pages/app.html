@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Squishy</title>
+
+<link 
+  rel="stylesheet" 
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
+  crossorigin="anonymous">
+
+<script 
+  src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" 
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" 
+  crossorigin="anonymous"></script>
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="/resources/css/bootstrap-dark.css">
+
+<style>
+body {margin:0px; padding:0px;}
+.fakebutton {cursor: pointer;}
+#navbar {position: absolute; top:0px; left:0px; right:0px; height:40px;  background-color: red;}
+#sidebar {position: absolute; top:40px; bottom: 0px; left:0px; width:250px; background-color: green;}
+#content {position: absolute; top:40px; left:250px; right:0px; bottom: 0px; background-color: blue;}
+</style>
+</head>
+<body>
+
+
+	<div id='navbar'>
+	Squishy
+	<span style='position:absolute; right:0px;'>{{.Username}}</span>
+	</div>
+
+
+	<div id='sidebar'>
+		<ul class="list-group">
+		  <li class="list-group-item fakebutton">Things</li>
+		  <li class="list-group-item fakebutton">Stuff</li>
+		  <li class="list-group-item fakebutton">Stuffed Things</li>
+		  <li class="list-group-item fakebutton">Settings</li>
+		  <li class="list-group-item fakebutton">Logs</li>
+		  <li class="list-group-item fakebutton">Logout</li>
+		</ul>
+	</div>
+	 
+	<div id='content'>
+		Content
+
+		<div class='container'>
+			<div class='row'>
+				<div class='col'>Col 1</div>
+				<div class='col'>Col 2</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
