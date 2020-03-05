@@ -12,6 +12,8 @@ function loadWO(id){
 			$('#woDetails').val(json.Details);
 			$('#woCustomerName').val(json.CustomerName);
 
+			window.location.hash = json.ID;
+
 		}
 	})
 }

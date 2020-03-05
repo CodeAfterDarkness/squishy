@@ -38,7 +38,7 @@ func main() {
 
 	router.GET("/", indexHandler)
 
-	router.GET("/app/", appHandler)
+	router.GET("/app/:userid", appHandler)
 
 	router.GET("/resources/*filepath", resourceHandler)
 
@@ -100,10 +100,19 @@ func appHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) 
 		return
 	}
 
+	userID, err := strconv.Atoi(ps.ByName("userid"))
+	if err != nil {
+		log.Printf("invalid userid %v", ps.ByName("userid"))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("User %d requested app", userID)
+
 	data := WOData{}
 
-	q := "SELECT id, name FROM workorders ORDER BY name DESC"
-	rows, err := db.Query(q)
+	q := "SELECT id, name FROM workorders WHERE id IN (SELECT wo_id FROM wo_assignments WHERE user_id = ?) ORDER BY name DESC"
+	rows, err := db.Query(q, userID)
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -122,12 +131,6 @@ func appHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) 
 
 		data.WorkOrders.WorkOrderItems = append(data.WorkOrders.WorkOrderItems, wo)
 	}
-
-	// data.WorkOrders.WorkOrderItems = []WorkOrder{
-	// 	{Name: "test0", ID: 0},
-	// 	{Name: "test2", ID: 2},
-	// 	{Name: "test4", ID: 4},
-	// }
 
 	t, err := template.New("app").Parse(string(fileBytes))
 	if err != nil {

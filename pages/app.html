@@ -48,6 +48,7 @@
 	<a class="navbar-brand">Squishy</a>
 
 	<a class="nav-link active" href="#">Orders</a>
+	<a class="nav-link" href="#">Management</a>
 	<a class="nav-link disabled">Username</a>
 	</nav>
 
@@ -59,9 +60,10 @@
 	 
 	<div id='content'>
 		<!-- Work Order data form --> 
-		<div class='container'>
+		<div class='container' id='orderConsumption'>
 			<div class='row'>
 				<div class='col'>
+					<button class="btn btn-primary">+ Work Order</button> <button class="btn btn-success">Submit Work Order</button>
 					<div class='form-group'>
 						<label for='woID'>Work Order ID</label>
 						<input type='text' disabled="disabled" name='name' class="form-control" id='woID'>
