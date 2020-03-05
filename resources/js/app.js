@@ -17,3 +17,22 @@ function loadWO(id){
 		}
 	})
 }
+
+function createWO(){
+
+	data = {};
+	data.OrderName = $('#woMgmtName').val();
+	data.Summary = $('#woMgmtSummary').val();
+	data.Details = $('#woMgmtDetails').val();
+	data.CustomerName = $('#woMgmtCustomerName').val();
+
+	$.ajax({
+		data: JSON.stringify(data),
+		method: "POST",
+		url: "../wo",
+		success: function(json){
+			console.log(json);
+
+		}
+	})
+}

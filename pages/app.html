@@ -1,9 +1,17 @@
 {{define "sidebarItems"}}
 <ul class="list-group">
 	{{range .WorkOrderItems}}
-		<li class="list-group-item fakebutton" id="wo-{{.ID}}" onclick="loadWO({{.ID}})">{{.Name}}</li>
+		<li class="list-group-item fakebutton" id="wo-{{.ID}}" onclick="loadWO({{.ID}})">{{.OrderName}}</li>
 	{{end}}
 </ul>
+{{end}}
+
+{{define "userSelect"}}
+	<select>
+		{{range .Users}}
+		<option value="{{.ID}}">{{.Name}}</option>
+		{{end}}
+	</select>
 {{end}}
 
 {{define "app"}}
@@ -35,8 +43,12 @@
 <style>
 .fakebutton {cursor: pointer;}
 #navbar {position: absolute; top:0px; left:0px; right:0px; height:60px; padding:10px;}
-#sidebar {position: absolute; top:60px; bottom: 0px; left:0px; width:250px;}
-#content {position: absolute; top:60px; left:250px; right:0px; bottom: 0px;}
+#woSidebar {position: absolute; top:60px; bottom: 0px; left:0px; width:250px;}
+#woContent {position: absolute; top:60px; left:250px; right:0px; bottom: 0px;}
+
+#mgmtSidebar {position: absolute; top:60px; bottom: 0px; left:0px; width:250px;}
+#mgmtContent {position: absolute; top:60px; left:250px; right:0px; bottom: 0px;}
+.nav-link.active {background-color: #444;}
 </style>
 
 <script src="../resources/js/app.js"></script>
@@ -47,48 +59,88 @@
 	<nav id='navbar' class="nav">
 	<a class="navbar-brand">Squishy</a>
 
-	<a class="nav-link active" href="#">Orders</a>
-	<a class="nav-link" href="#">Management</a>
+	<a class="nav-link active" data-toggle="tab" href="#workOrderContent">Orders</a>
+	<a class="nav-link" data-toggle="tab" href="#mgmtContent">Management</a>
 	<a class="nav-link disabled">Username</a>
 	</nav>
 
 
-	<div id='sidebar'>
-		<!-- Work Order list on sidebar -->
-		{{template "sidebarItems" .WorkOrders}}
-	</div>
-	 
-	<div id='content'>
-		<!-- Work Order data form --> 
-		<div class='container' id='orderConsumption'>
-			<div class='row'>
-				<div class='col'>
-					<button class="btn btn-primary">+ Work Order</button> <button class="btn btn-success">Submit Work Order</button>
-					<div class='form-group'>
-						<label for='woID'>Work Order ID</label>
-						<input type='text' disabled="disabled" name='name' class="form-control" id='woID'>
-					</div>
-					<div class='form-group'>
-						<label for='woCustomerName'>Customer Name</label>
-						<input type='text' name='name' class="form-control" id='woCustomerName'>
-					</div>
-					<div class='form-group'>
-						<label for='woName'>Work Order Name</label>
-						<input type='text' name='name' class="form-control" id='woName'>
-					</div>
-					<div class='form-group'>
-						<label for='woSummary'>Work Order Summary</label>
-						<input type='text' name='name' class="form-control" id='woSummary'>
-					</div>
-					<div class='form-group'>
-						<label for='woDetails'>Work Order Details</label>
-						<textarea type='text' name='name' class="form-control" id='woDetails'></textarea>
+	<div class="tab-content" id="myTabContent">
+
+		<div class="tab-pane show active" id="workOrderContent">
+			<div id='woSidebar'>
+				<!-- Work Order list on sidebar -->
+				{{template "sidebarItems" .WorkOrders}}
+			</div>
+
+			<div id='woContent'>
+				<!-- Work Order data form --> 
+				<div class='container' id='orderConsumption'>
+					<div class='row'>
+						<div class='col'>
+							<div class='form-group'>
+								<label for='woID'>Work Order ID</label>
+								<input type='text' disabled="disabled" name='name' class="form-control" id='woID'>
+							</div>
+							<div class='form-group'>
+								<label for='woCustomerName'>Customer Name</label>
+								<input type='text' name='name' class="form-control" id='woCustomerName'>
+							</div>
+							<div class='form-group'>
+								<label for='woName'>Work Order Name</label>
+								<input type='text' name='name' class="form-control" id='woName'>
+							</div>
+							<div class='form-group'>
+								<label for='woSummary'>Work Order Summary</label>
+								<input type='text' name='name' class="form-control" id='woSummary'>
+							</div>
+							<div class='form-group'>
+								<label for='woDetails'>Work Order Details</label>
+								<textarea type='text' name='name' class="form-control" id='woDetails'></textarea>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
+		<div class="tab-pane" id='mgmtContent'>
+			<div id='mgmtSidebar'>
+				<!-- Management actions list on sidebar -->
+				
+			</div>
+
+			<!-- Work Order data form --> 
+			<div class='container' id='orderManagement'>
+				<div class='row'>
+					<div class='col'>
+						<button class="btn btn-success" onclick="createWO()">Submit Work Order</button>
+						<div class='form-group'>
+							<label for='woCustomerName'>Customer Name</label>
+							<input type='text' name='name' class="form-control" id='woMgmtCustomerName'>
+						</div>
+						<div class='form-group'>
+							<label for='woName'>Work Order Name</label>
+							<input type='text' name='name' class="form-control" id='woMgmtName'>
+						</div>
+						<div class='form-group'>
+							<label for='woSummary'>Work Order Summary</label>
+							<input type='text' name='name' class="form-control" id='woMgmtSummary'>
+						</div>
+						<div class='form-group'>
+							<label for='woDetails'>Work Order Details</label>
+							<textarea type='text' name='name' class="form-control" id='woMgmtDetails'></textarea>
+						</div>
+						<div class='form-group'>
+							<label for='woDetails'>Work Order Assignment</label>
+							{{template "userSelect"}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
 
 </body>
 </html>
