@@ -1,3 +1,12 @@
+{{define "sidebarItems"}}
+<ul class="list-group">
+	{{range .WorkOrderItems}}
+		<li class="list-group-item fakebutton" id="wo-{{.ID}}" onclick="loadWO({{.ID}})">{{.Name}}</li>
+	{{end}}
+</ul>
+{{end}}
+
+{{define "app"}}
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,53 +18,71 @@
   integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
   crossorigin="anonymous">
 
-<script 
-  src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" 
-  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" 
-  crossorigin="anonymous"></script>
-
 <script
   src="https://code.jquery.com/jquery-3.4.1.min.js"
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script>
 
+<script 
+  src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" 
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" 
+  crossorigin="anonymous"></script>
+
+
+
 <link rel="stylesheet" href="/resources/css/bootstrap-dark.css">
 
 <style>
-body {margin:0px; padding:0px;}
 .fakebutton {cursor: pointer;}
-#navbar {position: absolute; top:0px; left:0px; right:0px; height:40px;  background-color: red;}
-#sidebar {position: absolute; top:40px; bottom: 0px; left:0px; width:250px; background-color: green;}
-#content {position: absolute; top:40px; left:250px; right:0px; bottom: 0px; background-color: blue;}
+#navbar {position: absolute; top:0px; left:0px; right:0px; height:60px; padding:10px;}
+#sidebar {position: absolute; top:60px; bottom: 0px; left:0px; width:250px;}
+#content {position: absolute; top:60px; left:250px; right:0px; bottom: 0px;}
 </style>
+
+<script src="../resources/js/app.js"></script>
 </head>
 <body>
 
 
-	<div id='navbar'>
-	Squishy
-	<span style='position:absolute; right:0px;'>{{.Username}}</span>
-	</div>
+	<nav id='navbar' class="nav">
+	<a class="navbar-brand">Squishy</a>
+
+	<a class="nav-link active" href="#">Orders</a>
+	<a class="nav-link disabled">Username</a>
+	</nav>
 
 
 	<div id='sidebar'>
-		<ul class="list-group">
-		  <li class="list-group-item fakebutton">Things</li>
-		  <li class="list-group-item fakebutton">Stuff</li>
-		  <li class="list-group-item fakebutton">Stuffed Things</li>
-		  <li class="list-group-item fakebutton">Settings</li>
-		  <li class="list-group-item fakebutton">Logs</li>
-		  <li class="list-group-item fakebutton">Logout</li>
-		</ul>
+		<!-- Work Order list on sidebar -->
+		{{template "sidebarItems" .WorkOrders}}
 	</div>
 	 
 	<div id='content'>
-		Content
-
+		<!-- Work Order data form --> 
 		<div class='container'>
 			<div class='row'>
-				<div class='col'>Col 1</div>
-				<div class='col'>Col 2</div>
+				<div class='col'>
+					<div class='form-group'>
+						<label for='woID'>Work Order ID</label>
+						<input type='text' disabled="disabled" name='name' class="form-control" id='woID'>
+					</div>
+					<div class='form-group'>
+						<label for='woCustomerName'>Customer Name</label>
+						<input type='text' name='name' class="form-control" id='woCustomerName'>
+					</div>
+					<div class='form-group'>
+						<label for='woName'>Work Order Name</label>
+						<input type='text' name='name' class="form-control" id='woName'>
+					</div>
+					<div class='form-group'>
+						<label for='woSummary'>Work Order Summary</label>
+						<input type='text' name='name' class="form-control" id='woSummary'>
+					</div>
+					<div class='form-group'>
+						<label for='woDetails'>Work Order Details</label>
+						<textarea type='text' name='name' class="form-control" id='woDetails'></textarea>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -63,3 +90,4 @@ body {margin:0px; padding:0px;}
 
 </body>
 </html>
+{{end}}
