@@ -21,5 +21,12 @@
 		- Work Order Management UI
 		- RESTful CRUD of work orders
 			- ~~POST new work order~~
-			- Update work order
-			- Delete work order
+			
+- Goals 2020-03-22
+	- Login Authentication
+		- Database of users
+		- Check password on logon
+		- Redirect to correct landing page
+	- Work Order Management UI
+		- Update work order
+		- Delete work order

@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -17,6 +19,8 @@ var db *sql.DB
 func main() {
 
 	var err error
+
+	rand.Seed(time.Now().UnixNano())
 
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
 
@@ -39,6 +43,10 @@ func main() {
 
 	router.GET("/wo/:woID", woReadHandler)
 	router.POST("/wo", woCreateHandler)
+
+	router.POST("/auth", authHandler)
+
+	router.GET("/logout", logoutHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 

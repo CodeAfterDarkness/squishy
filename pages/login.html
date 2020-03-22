@@ -12,7 +12,6 @@
 <body>
 
 	<div class='container'>
-
 		<div class='row' style='min-height: 400px;'>
 			<div class='col-4'></div>
 			
@@ -20,29 +19,25 @@
 
 				<h1 style='text-align: center;'>Squishy</h1>
 
-				<div class='input-group mb-3'>
-					<div class='input-group-prepend'>
-						<span class='input-group-text'>Username: </span>
+				<form action='/auth' method='POST' >
+					<div class='input-group mb-3'>
+						<div class='input-group-prepend'>
+							<span class='input-group-text'>Username: </span>
+						</div>
+						<input type='text' class='form-control' placeholder='' name='username'>
 					</div>
-					<input type='text' class='form-control' placeholder='' name='username'>
-				</div>
 
-				<div class='input-group mb-3'>
-					<div class='input-group-prepend'>
-						<span class='input-group-text'>Password: </span>
+					<div class='input-group mb-3'>
+						<div class='input-group-prepend'>
+							<span class='input-group-text'>Password: </span>
+						</div>
+						<input type='password' class='form-control' placeholder='' name='password'>
 					</div>
-					<input type='password' class='form-control' placeholder='' name='password'>
-				</div>
 
-				<button class='btn btn-primary btn-block' type='submit'>Login</button>
-
+					<button class='btn btn-primary btn-block' type='submit'>Login</button>
+				</form>
 			</div>
-
-			<div class='col-4'></div>
-
 		</div>
-
 	</div>
-
 </body>
 </html>

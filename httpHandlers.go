@@ -1,17 +1,120 @@
 package main
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"mime"
 	"net/http"
 	"strconv"
+	"strings"
 	"text/template"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 )
+
+func logoutHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+	// delete cookie?
+	// invalidate session in DB
+
+}
+
+func randStringGenerator(length int) string {
+
+	chars := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	chars = chars + strings.ToLower(chars)
+
+	b := strings.Builder{}
+
+	for i := 0; i < length; i++ {
+		idx := rand.Int31n(int32(len(chars)) - 1)
+		b.WriteByte(chars[idx])
+	}
+
+	return b.String()
+}
+
+func userCreate(username, password string) {
+
+	salt := randStringGenerator(10)
+	passHashed := sha256.Sum256([]byte(password + salt))
+	passHashedHex := hex.EncodeToString(passHashed[:])
+
+	q := "INSERT INTO sec_users (username, password_hash, salt) VALUES (?, ?, ?)"
+	_, err := db.Exec(q, username, passHashedHex, salt)
+	if err != nil {
+		log.Print(err)
+	}
+}
+
+func authHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+	// User POSTing auth credentials
+	var err error
+
+	req.ParseForm()
+
+	username := req.Form.Get("username")
+	password := req.Form.Get("password")
+
+	var salt string
+	q := "SELECT salt FROM sec_users WHERE username = ?"
+	err = db.QueryRow(q, username).Scan(&salt)
+	if err != nil {
+		log.Print(err)
+		w.Header().Set("Location", "/")
+		w.WriteHeader(http.StatusMovedPermanently)
+		return
+	}
+
+	passHashed := sha256.Sum256([]byte(password + salt))
+
+	passHashedHex := hex.EncodeToString(passHashed[:])
+
+	log.Printf("User '%s' requested authentication with password '%s', with salt '%s', and hash '%s'", username, password, salt, passHashedHex)
+
+	var userID int
+	q = "SELECT id FROM sec_users WHERE username = ? AND password_hash = ?"
+	err = db.QueryRow(q, username, passHashedHex).Scan(&userID)
+	if err != nil {
+		log.Print(err)
+	}
+
+	if userID > 0 {
+		log.Printf("User '%s' logged in successfully", username)
+
+		// Generate UUID for login cookie
+
+		sessionID := uuid.New().String()
+
+		q = "INSERT INTO sec_sessions (uuid, user_id) VALUES (?, ?)"
+		_, err = db.Exec(q, sessionID, userID)
+		if err != nil {
+			log.Print(err)
+		}
+
+		expire := time.Now().Add(time.Hour * 8)
+		cookie := &http.Cookie{
+			Name:    "sessionID",
+			Value:   sessionID,
+			Expires: expire,
+		}
+		http.SetCookie(w, cookie)
+
+		w.Header().Set("Location", fmt.Sprintf("/app/%d", userID))
+		w.WriteHeader(http.StatusMovedPermanently)
+	} else {
+		w.Header().Set("Location", "/")
+		w.WriteHeader(http.StatusMovedPermanently)
+	}
+
+}
 
 type WorkOrder struct {
 	ID           int
@@ -77,12 +180,34 @@ func appHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) 
 
 	log.Printf("User %d requested app", userID)
 
+	sessionCookie, err := req.Cookie("sessionID")
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if sessionCookie != nil {
+		//q := "SELECT id FROM sec_sessions WHERE uuid = ? AND user_id = ?"
+		var id int
+		q := "SELECT id FROM sec_sessions WHERE uuid = ?"
+		err = db.QueryRow(q, sessionCookie.Value).Scan(&id)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				log.Print("session missing!?!")
+				w.Header().Set("Location", "/")
+				w.WriteHeader(http.StatusMovedPermanently)
+				return
+			}
+		}
+	}
+
 	data := WOData{}
 
 	q := "SELECT id, name FROM workorders WHERE id IN (SELECT wo_id FROM wo_assignments WHERE user_id = ?) ORDER BY name DESC"
 	rows, err := db.Query(q, userID)
 	if err != nil {
-		log.Print(err)
+		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
